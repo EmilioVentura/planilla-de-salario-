@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Sueldos</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .contenedor {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            width: 80%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .tabla-horizontal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .campo {
+            width: calc(50% - 10px);
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
+        .resultado {
+            font-weight: bold;
+            padding: 8px;
+            background: #eaeaea;
+            border-radius: 5px;
+        }
+        .button {
+            padding: 12px 20px;
+            background-color: #4e4c6b;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Calculadora de Sueldos</h1>
+        <div class="tabla-horizontal">
+            <div class="campo"><label for="nombre">Nombre</label><input type="text" id="nombre" placeholder="Nombre"></div>
+            <div class="campo"><label for="apellido">Apellido</label><input type="text" id="apellido" placeholder="Apellido"></div>
+            <div class="campo"><label for="cargo">Cargo</label><input type="text" id="cargo" placeholder="Cargo"></div>
+            <div class="campo"><label for="sueldoBase">Sueldo Base</label><input type="number" id="sueldoBase" placeholder="Sueldo Base"></div>
+            <div class="campo"><label>AFP</label><span class="resultado" id="resultado-afp">-</span></div>
+            <div class="campo"><label>ISSS</label><span class="resultado" id="resultado-isss">-</span></div>
+            <div class="campo"><label>Renta Imponible</label><span class="resultado" id="resultado-rentaI">-</span></div>
+            <div class="campo"><label>ISR</label><span class="resultado" id="resultado-isr">-</span></div>
+            <div class="campo"><label>Retenciones</label><span class="resultado" id="resultado-retenciones">-</span></div>
+            <div class="campo"><label>Sueldo Neto</label><span class="resultado" id="resultado-sueldo-neto">-</span></div>
+            <div class="campo"><label>ISSS Patronal</label><span class="resultado" id="resultado-isssPatronal">-</span></div>
+            <div class="campo"><label>AFP Patronal</label><span class="resultado" id="resultado-afpPatronal">-</span></div>
+        </div>
+        <button class="button" onclick="calcularSueldo()">Calcular Sueldo Neto</button>
+    </div>
+    
+    <script>
+        function calcularSueldo() {
+            const sueldo = parseFloat(document.getElementById('sueldoBase').value) || 0;
+
+            if (sueldo <= 0) {
+                alert("Por favor ingrese un sueldo válido.");
+                return;
+            }
+            let isss = sueldo >= 1000 ? 30 : sueldo * 0.03;
+            const afp = sueldo * 0.0725;
+            const rentaI = sueldo - isss - afp;
+
+            let isr = 0;
+            if (rentaI > 2038.10) {
+                isr = ((rentaI - 2038.10) * 0.30) + 288.57;
+            } else if (rentaI > 895.24) {
+                isr = ((rentaI - 895.24) * 0.20) + 60;
+            } else if (rentaI > 472.00) {
+                isr = ((rentaI - 472.00) * 0.10) + 17.67;
+            }
+
+            const retenciones = isr + isss + afp;
+            const sueldoNeto = rentaI - isr;
+            const isssPatronal = sueldo * 0.075;
+            const afpPatronal = sueldo * 0.0875;
+
+            document.getElementById('resultado-afp').textContent = `$${afp.toFixed(2)}`;
+            document.getElementById('resultado-isss').textContent = `$${isss.toFixed(2)}`;
+            document.getElementById('resultado-rentaI').textContent = `$${rentaI.toFixed(2)}`;
+            document.getElementById('resultado-isr').textContent = `$${isr.toFixed(2)}`;
+            document.getElementById('resultado-retenciones').textContent = `$${retenciones.toFixed(2)}`;
+            document.getElementById('resultado-sueldo-neto').textContent = `$${sueldoNeto.toFixed(2)}`;
+            document.getElementById('resultado-isssPatronal').textContent = `$${isssPatronal.toFixed(2)}`;
+            document.getElementById('resultado-afpPatronal').textContent = `$${afpPatronal.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>
